@@ -1,3 +1,9 @@
+# Platform folders (not needed for Android/iOS only project)
+/linux/
+/macos/
+/web/
+/windows/
+
 # Miscellaneous
 *.class
 *.lock
