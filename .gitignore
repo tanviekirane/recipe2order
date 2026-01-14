@@ -7,6 +7,19 @@
 .buildlog/
 .history
 
+# IDE - IntelliJ/Android Studio
+.idea/
+*.iml
+
+# IDE - VS Code (uncomment if you don't want to share settings)
+# .vscode/
+
+# Claude Code local config
+.claude/
+
+# Flutter local metadata (machine-specific)
+.metadata
+
 
 
 # Flutter repo-specific
