@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/shopping_list_provider.dart';
 import '../widgets/empty_state_widget.dart';
+import '../widgets/shopping_list_card.dart';
+import 'create_shopping_list_screen.dart';
+import 'shopping_list_detail_screen.dart';
 
 /// Screen displaying the list of shopping lists
 class ShoppingListsScreen extends StatelessWidget {
@@ -12,12 +17,41 @@ class ShoppingListsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Shopping Lists'),
       ),
-      // Show empty state for now, will be dynamic in Phase 4
-      body: _buildEmptyState(context),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Navigate to create shopping list screen - implemented in Phase 4
+      body: Consumer<ShoppingListProvider>(
+        builder: (context, provider, _) {
+          final lists = provider.lists;
+
+          if (lists.isEmpty) {
+            return _buildEmptyState(context);
+          }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.85,
+            ),
+            itemCount: lists.length,
+            itemBuilder: (context, index) {
+              final list = lists[index];
+              return ShoppingListCard(
+                shoppingList: list,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ShoppingListDetailScreen(listId: list.id),
+                    ),
+                  );
+                },
+              );
+            },
+          );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _navigateToCreateList(context),
         icon: const Icon(Icons.add),
         label: const Text('Create List'),
       ),
@@ -30,9 +64,15 @@ class ShoppingListsScreen extends StatelessWidget {
       title: 'No shopping lists yet',
       subtitle: 'Create a shopping list by selecting recipes to combine',
       actionLabel: 'Create List',
-      onAction: () {
-        // Navigate to create shopping list screen - implemented in Phase 4
-      },
+      onAction: () => _navigateToCreateList(context),
+    );
+  }
+
+  void _navigateToCreateList(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateShoppingListScreen(),
+      ),
     );
   }
 }
