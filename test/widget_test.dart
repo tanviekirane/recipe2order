@@ -1,30 +1,66 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:recipe2order/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App shell renders with bottom navigation', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Wait for async operations to complete
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that the app title appears
+    expect(find.text('Recipe2Order'), findsWidgets);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify bottom navigation bar exists with all destinations
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Recipes'), findsOneWidget);
+    expect(find.text('Lists'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
+  });
+
+  testWidgets('Navigation between tabs works', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
+
+    // Initially on Home screen - should see welcome text
+    expect(find.text('Welcome to'), findsOneWidget);
+
+    // Tap on Recipes tab
+    await tester.tap(find.text('Recipes'));
+    await tester.pumpAndSettle();
+
+    // Should see Recipes screen
+    expect(find.text('My Recipes'), findsOneWidget);
+    expect(find.text('No recipes yet'), findsOneWidget);
+
+    // Tap on Lists tab
+    await tester.tap(find.text('Lists'));
+    await tester.pumpAndSettle();
+
+    // Should see Shopping Lists screen
+    expect(find.text('Shopping Lists'), findsOneWidget);
+    expect(find.text('No shopping lists yet'), findsOneWidget);
+
+    // Tap on Settings tab
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+
+    // Should see Settings screen
+    expect(find.text('Appearance'), findsOneWidget);
+    expect(find.text('Theme'), findsOneWidget);
+  });
+
+  testWidgets('Home screen quick action cards navigate correctly', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
+
+    // Tap on Add Recipe card
+    await tester.tap(find.text('Add Recipe'));
+    await tester.pumpAndSettle();
+
+    // Should navigate to Recipes tab
+    expect(find.text('My Recipes'), findsOneWidget);
   });
 }
