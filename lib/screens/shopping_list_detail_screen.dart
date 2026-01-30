@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/list_item.dart';
 import '../models/shopping_list.dart';
 import '../providers/shopping_list_provider.dart';
+import '../services/share_service.dart';
 import '../widgets/list_item_tile.dart';
 
 /// Screen showing details of a shopping list with check/uncheck functionality
@@ -37,9 +38,28 @@ class ShoppingListDetailScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(shoppingList.name),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.copy),
+                tooltip: 'Copy to clipboard',
+                onPressed: () => _copyToClipboard(context, shoppingList),
+              ),
+              IconButton(
+                icon: const Icon(Icons.share),
+                tooltip: 'Share',
+                onPressed: () => ShareService.shareList(shoppingList),
+              ),
               PopupMenuButton<String>(
                 onSelected: (value) => _handleMenuAction(context, value, shoppingList),
                 itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'rename',
+                    child: ListTile(
+                      leading: Icon(Icons.edit),
+                      title: Text('Rename'),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const PopupMenuDivider(),
                   const PopupMenuItem(
                     value: 'check_all',
                     child: ListTile(
@@ -237,6 +257,13 @@ class ShoppingListDetailScreen extends StatelessWidget {
     context.read<ShoppingListProvider>().toggleItemChecked(listId, item.id);
   }
 
+  void _copyToClipboard(BuildContext context, ShoppingList list) {
+    ShareService.copyToClipboard(list);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Copied to clipboard')),
+    );
+  }
+
   void _deleteItem(BuildContext context, ListItem item) {
     context.read<ShoppingListProvider>().deleteItem(listId, item.id);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -256,6 +283,9 @@ class ShoppingListDetailScreen extends StatelessWidget {
     final provider = context.read<ShoppingListProvider>();
 
     switch (action) {
+      case 'rename':
+        _showRenameDialog(context, list);
+        break;
       case 'check_all':
         provider.checkAllItems(listId);
         break;
@@ -269,6 +299,46 @@ class ShoppingListDetailScreen extends StatelessWidget {
         _showDeleteListDialog(context);
         break;
     }
+  }
+
+  void _showRenameDialog(BuildContext context, ShoppingList list) {
+    final controller = TextEditingController(text: list.name);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Rename List'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'List Name',
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final newName = controller.text.trim();
+              if (newName.isEmpty) return;
+              final provider = context.read<ShoppingListProvider>();
+              if (provider.nameExists(newName, excludeId: listId)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('A list with this name already exists')),
+                );
+                return;
+              }
+              provider.renameList(listId, newName);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Rename'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showClearCheckedDialog(BuildContext context) {

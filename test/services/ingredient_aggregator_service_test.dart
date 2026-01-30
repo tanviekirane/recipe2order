@@ -10,6 +10,7 @@ void main() {
         final recipe1 = Recipe(
           id: 'recipe1',
           title: 'Recipe 1',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'flour', quantity: 2, unit: 'cup'),
             Ingredient(name: 'sugar', quantity: 1, unit: 'cup'),
@@ -19,6 +20,7 @@ void main() {
         final recipe2 = Recipe(
           id: 'recipe2',
           title: 'Recipe 2',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'flour', quantity: 1, unit: 'cup'),
             Ingredient(name: 'eggs', quantity: 3),
@@ -55,6 +57,7 @@ void main() {
         final recipe = Recipe(
           id: 'recipe1',
           title: 'Empty Recipe',
+          source: RecipeSource.text,
           ingredients: [],
         );
 
@@ -66,6 +69,7 @@ void main() {
         final recipe1 = Recipe(
           id: 'recipe1',
           title: 'Recipe 1',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'butter', quantity: 2, unit: 'tbsp'),
           ],
@@ -74,6 +78,7 @@ void main() {
         final recipe2 = Recipe(
           id: 'recipe2',
           title: 'Recipe 2',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'butter', quantity: 1, unit: 'stick'),
           ],
@@ -90,6 +95,7 @@ void main() {
         final recipe1 = Recipe(
           id: 'recipe1',
           title: 'Recipe 1',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'Flour', quantity: 1, unit: 'cup'),
           ],
@@ -98,6 +104,7 @@ void main() {
         final recipe2 = Recipe(
           id: 'recipe2',
           title: 'Recipe 2',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'flour', quantity: 1, unit: 'cup'),
           ],
@@ -114,6 +121,7 @@ void main() {
         final recipe1 = Recipe(
           id: 'recipe1',
           title: 'Recipe 1',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'salt'),
           ],
@@ -122,6 +130,7 @@ void main() {
         final recipe2 = Recipe(
           id: 'recipe2',
           title: 'Recipe 2',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'salt'),
           ],
@@ -139,6 +148,7 @@ void main() {
         final recipe = Recipe(
           id: 'recipe1',
           title: 'Recipe 1',
+          source: RecipeSource.text,
           ingredients: [
             Ingredient(name: 'zucchini', quantity: 1),
             Ingredient(name: 'apple', quantity: 2),

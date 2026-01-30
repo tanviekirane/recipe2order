@@ -64,8 +64,11 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
         .where((r) => _selectedRecipeIds.contains(r.id))
         .toList();
 
+    // Ensure unique name
+    final name = shoppingListProvider.getUniqueName(_nameController.text.trim());
+
     final shoppingList = shoppingListProvider.createFromRecipes(
-      name: _nameController.text.trim(),
+      name: name,
       recipes: selectedRecipes,
     );
 

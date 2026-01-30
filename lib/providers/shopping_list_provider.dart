@@ -22,6 +22,34 @@ class ShoppingListProvider extends ChangeNotifier {
     }
   }
 
+  /// Check if a name already exists (case-insensitive)
+  bool nameExists(String name, {String? excludeId}) {
+    final lowerName = name.toLowerCase().trim();
+    return _lists.any((list) =>
+        list.name.toLowerCase().trim() == lowerName &&
+        (excludeId == null || list.id != excludeId));
+  }
+
+  /// Get a unique name by appending a number if needed
+  String getUniqueName(String baseName) {
+    if (!nameExists(baseName)) return baseName;
+    int counter = 2;
+    while (nameExists('$baseName ($counter)')) {
+      counter++;
+    }
+    return '$baseName ($counter)';
+  }
+
+  /// Rename a shopping list
+  void renameList(String listId, String newName) {
+    final index = _lists.indexWhere((list) => list.id == listId);
+    if (index != -1) {
+      _lists[index] = _lists[index].copyWith(name: newName);
+      notifyListeners();
+      Logger.info('Renamed list to: $newName', tag: 'ShoppingListProvider');
+    }
+  }
+
   /// Create a new shopping list from selected recipes
   ShoppingList createFromRecipes({
     required String name,

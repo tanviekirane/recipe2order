@@ -5,6 +5,7 @@ import '../providers/recipe_provider.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/recipe_card.dart';
 import 'add_recipe_screen.dart';
+import 'recipe_detail_screen.dart';
 
 /// Screen displaying the list of saved recipes
 class RecipesScreen extends StatelessWidget {
@@ -70,7 +71,11 @@ class RecipesScreen extends StatelessWidget {
         return RecipeCard(
           recipe: recipe,
           onTap: () {
-            // TODO: Navigate to recipe detail screen
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+              ),
+            );
           },
           onDelete: () {
             provider.deleteRecipe(recipe.id);
