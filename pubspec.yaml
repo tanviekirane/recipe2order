@@ -41,6 +41,9 @@ dependencies:
   # Networking
   http: ^1.2.0
 
+  # HTML parsing for URL recipe import
+  html: ^0.15.4
+
   # URL launching
   url_launcher: ^6.3.0
 

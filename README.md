@@ -4,7 +4,8 @@ Plan your week's recipes and generate a consolidated shopping list for easy groc
 
 ## Features
 
-- **Recipe Input** - Add recipes via text input with ingredient lists
+- **Recipe Input** - Add recipes via text input or URL import
+- **URL Import** - Paste a recipe URL from popular cooking sites to auto-extract ingredients
 - **Smart Parsing** - Automatic extraction of ingredients with quantities and units
 - **Recipe Management** - View, edit, and delete saved recipes
 - **Shopping Lists** - Create aggregated shopping lists from multiple recipes
@@ -32,6 +33,15 @@ Plan your week's recipes and generate a consolidated shopping list for easy groc
 4. **Parse Recipe** - Tap "Parse Recipe" to extract ingredients
 5. **Review & Edit** - Review the parsed ingredients, edit quantities/units if needed
 6. **Save** - Tap "Save" to add the recipe to your collection
+
+### Importing a Recipe from URL
+
+1. **Navigate to Recipes** - Tap the "Recipes" tab
+2. **Add New Recipe** - Tap the "Add Recipe" button
+3. **Select "From URL" Tab** - Switch to the URL import tab
+4. **Paste URL** - Paste a recipe URL from sites like AllRecipes, Food Network, Epicurious, etc.
+5. **Fetch Recipe** - Tap "Fetch Recipe" to automatically extract ingredients
+6. **Review & Save** - Review the parsed ingredients and save
 
 ### Managing Recipes
 
@@ -310,7 +320,6 @@ flutter doctor -v
 
 ## Future Enhancements
 
-- URL recipe import (paste recipe URLs)
 - SQLite persistence for data storage
 - Recipe search and filtering
 - Grocery store API integrations
