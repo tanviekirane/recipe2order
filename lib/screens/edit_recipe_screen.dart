@@ -115,12 +115,21 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       return;
     }
 
+    final provider = context.read<RecipeProvider>();
+    // Check for duplicate name (excluding current recipe)
+    if (provider.nameExists(title, excludeId: widget.recipe.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('A recipe with this name already exists')),
+      );
+      return;
+    }
+
     final updatedRecipe = widget.recipe.copyWith(
       title: title,
       ingredients: _ingredients,
     );
 
-    context.read<RecipeProvider>().updateRecipe(updatedRecipe);
+    provider.updateRecipe(updatedRecipe);
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Recipe updated')),

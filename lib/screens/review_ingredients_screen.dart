@@ -108,10 +108,56 @@ class _ReviewIngredientsScreenState extends State<ReviewIngredientsScreen> {
                       if (value.trim().length < 2) {
                         return 'Title must be at least 2 characters';
                       }
+                      if (provider.nameExists(value.trim())) {
+                        return 'A recipe with this name already exists';
+                      }
                       return null;
                     },
                   ),
                 ),
+
+                // Warning banner for items needing review
+                Builder(
+                  builder: (context) {
+                    final itemsNeedingReview = ingredients.where((ing) {
+                      if (ing.quantity != null && ing.unit == null) return true;
+                      if (ing.name.trim().length < 3) return true;
+                      if (ing.name == ing.name.toUpperCase() && ing.name.length > 2) return true;
+                      if (ing.name.trim().endsWith(':')) return true;
+                      return false;
+                    }).length;
+
+                    if (itemsNeedingReview == 0) return const SizedBox.shrink();
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: theme.colorScheme.onErrorContainer,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              '$itemsNeedingReview item${itemsNeedingReview == 1 ? '' : 's'} may need review. Check highlighted items below.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onErrorContainer,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 8),
 
                 // Ingredients count header
                 Padding(

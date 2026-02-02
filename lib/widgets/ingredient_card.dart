@@ -70,14 +70,73 @@ class _IngredientCardState extends State<IngredientCard> {
     );
   }
 
+  /// Check if this ingredient needs review (no unit and has quantity, or looks like a header)
+  bool get _needsReview {
+    final ing = widget.ingredient;
+    // Has quantity but no unit - might be incomplete
+    if (ing.quantity != null && ing.unit == null) return true;
+    // Name is very short (less than 3 chars) - might be incomplete
+    if (ing.name.trim().length < 3) return true;
+    // Name looks like a section header (all caps or ends with colon)
+    if (ing.name == ing.name.toUpperCase() && ing.name.length > 2) return true;
+    if (ing.name.trim().endsWith(':')) return true;
+    return false;
+  }
+
+  String _getWarningMessage() {
+    final ing = widget.ingredient;
+    if (ing.name.trim().endsWith(':') ||
+        (ing.name == ing.name.toUpperCase() && ing.name.length > 2)) {
+      return 'Looks like a section header - delete if not an ingredient';
+    }
+    if (ing.name.trim().length < 3) {
+      return 'Name is too short - please complete or delete';
+    }
+    if (ing.quantity != null && ing.unit == null) {
+      return 'Missing unit - tap to add or verify';
+    }
+    return 'Please review this item';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final needsReview = _needsReview;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      color: needsReview ? theme.colorScheme.errorContainer.withValues(alpha: 0.3) : null,
       child: Column(
         children: [
+          // Warning banner if needs review
+          if (needsReview)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 16,
+                    color: theme.colorScheme.onErrorContainer,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _getWarningMessage(),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onErrorContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Main row - always visible
           InkWell(
             onTap: () => setState(() => _isExpanded = !_isExpanded),

@@ -22,6 +22,24 @@ class RecipeProvider extends ChangeNotifier {
   String? get error => _error;
   bool get hasRecipes => _recipes.isNotEmpty;
 
+  /// Check if a recipe name already exists (case-insensitive)
+  bool nameExists(String name, {String? excludeId}) {
+    final lowerName = name.toLowerCase().trim();
+    return _recipes.any((recipe) =>
+        recipe.title.toLowerCase().trim() == lowerName &&
+        (excludeId == null || recipe.id != excludeId));
+  }
+
+  /// Get a unique name by appending a number if needed
+  String getUniqueName(String baseName) {
+    if (!nameExists(baseName)) return baseName;
+    int counter = 2;
+    while (nameExists('$baseName ($counter)')) {
+      counter++;
+    }
+    return '$baseName ($counter)';
+  }
+
   // Pending recipe getters
   List<Ingredient> get pendingIngredients => List.unmodifiable(_pendingIngredients);
   String? get pendingTitle => _pendingTitle;

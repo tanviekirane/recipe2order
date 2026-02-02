@@ -6,6 +6,7 @@ import '../models/shopping_list.dart';
 import '../providers/shopping_list_provider.dart';
 import '../services/share_service.dart';
 import '../widgets/list_item_tile.dart';
+import 'add_recipes_to_list_screen.dart';
 
 /// Screen showing details of a shopping list with check/uncheck functionality
 class ShoppingListDetailScreen extends StatelessWidget {
@@ -56,6 +57,14 @@ class ShoppingListDetailScreen extends StatelessWidget {
                     child: ListTile(
                       leading: Icon(Icons.edit),
                       title: Text('Rename'),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'add_recipes',
+                    child: ListTile(
+                      leading: Icon(Icons.restaurant_menu),
+                      title: Text('Add Recipes'),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -285,6 +294,14 @@ class ShoppingListDetailScreen extends StatelessWidget {
     switch (action) {
       case 'rename':
         _showRenameDialog(context, list);
+        break;
+      case 'add_recipes':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AddRecipesToListScreen(listId: listId),
+          ),
+        );
         break;
       case 'check_all':
         provider.checkAllItems(listId);

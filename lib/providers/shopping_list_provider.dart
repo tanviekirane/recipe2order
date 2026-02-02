@@ -193,4 +193,61 @@ class ShoppingListProvider extends ChangeNotifier {
     _lists[listIndex] = list.copyWith(items: updatedItems);
     notifyListeners();
   }
+
+  /// Add recipes to an existing shopping list
+  /// Aggregates new ingredients with existing items
+  int addRecipesToList(String listId, List<Recipe> recipes) {
+    final listIndex = _lists.indexWhere((list) => list.id == listId);
+    if (listIndex == -1) return 0;
+
+    final list = _lists[listIndex];
+
+    // Get new items from recipes
+    final newItems = IngredientAggregatorService.aggregateFromRecipes(recipes);
+    if (newItems.isEmpty) return 0;
+
+    // Merge with existing items
+    final existingItems = List<ListItem>.from(list.items);
+    int addedCount = 0;
+
+    for (final newItem in newItems) {
+      // Check if similar item exists (same name and unit)
+      final existingIndex = existingItems.indexWhere((existing) =>
+          existing.ingredientName.toLowerCase() == newItem.ingredientName.toLowerCase() &&
+          existing.unit == newItem.unit);
+
+      if (existingIndex != -1) {
+        // Combine quantities
+        final existing = existingItems[existingIndex];
+        final combinedQty = (existing.quantity ?? 0) + (newItem.quantity ?? 0);
+        final combinedSources = {...existing.sourceRecipeIds, ...newItem.sourceRecipeIds};
+
+        existingItems[existingIndex] = existing.copyWith(
+          quantity: combinedQty > 0 ? combinedQty : null,
+          sourceRecipeIds: combinedSources.toList(),
+        );
+      } else {
+        // Add as new item
+        existingItems.add(newItem);
+        addedCount++;
+      }
+    }
+
+    // Sort alphabetically
+    existingItems.sort((a, b) =>
+        a.ingredientName.toLowerCase().compareTo(b.ingredientName.toLowerCase()));
+
+    // Update recipe IDs
+    final updatedRecipeIds = {...list.recipeIds, ...recipes.map((r) => r.id)}.toList();
+
+    _lists[listIndex] = list.copyWith(
+      items: existingItems,
+      recipeIds: updatedRecipeIds,
+    );
+    notifyListeners();
+
+    Logger.info('Added ${recipes.length} recipes to list "${list.name}" ($addedCount new items)', tag: 'ShoppingListProvider');
+
+    return newItems.length;
+  }
 }
